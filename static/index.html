@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Deal Desk: import listings, group products, inspect asking-price bands and rank estimated profit.">
+  <title>Deal Desk — Your listings, in perspective</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='11' fill='%232b4844'/%3E%3Cpath d='M11 12h7a8 8 0 0 1 0 16h-7zM22 12h5M24 20h5M22 28h5' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/lab.css">
+  <link rel="stylesheet" href="/static/apple-ui.css">
+  <link rel="stylesheet" href="/static/deal-desk.css">
+</head>
+<body class="deal-desk">
+  <header class="desk-header topbar"><a class="brand" href="/"><span class="study-mark" aria-hidden="true"><i></i><i></i><i></i></span>Deal Desk</a><div><span class="local-dot"></span><span>Local workspace</span><a href="/docs">API docs ↗</a></div></header>
+  <main>
+    <section class="desk-intro"><div><span class="eyebrow">YOUR LISTINGS. ONE WORKSPACE.</span><h1>Find the deal.<br><span>See the numbers.</span></h1></div><p>Paste or import your listings. Group the products, put asking prices in perspective and compare estimated profit.</p></section>
+    <div class="desk-layout">
+      <aside class="import-panel">
+        <div class="panel-heading"><span class="step">01</span><div><h2>Bring your listings</h2><p>Up to 30 rows. Nothing goes to an AI provider.</p></div></div>
+        <div class="format-tabs" role="group" aria-label="Listing input format"><button id="format-json" type="button" aria-pressed="true" data-format="json">Paste JSON</button><button id="format-csv" type="button" aria-pressed="false" data-format="csv">Paste / import CSV</button></div>
+        <form id="compareForm" class="stack">
+          <div id="csv-upload" hidden><label class="upload-control">Choose a CSV file<input id="csv-file" type="file" accept=".csv,text/csv"></label><a href="/api/sample.csv" class="sample-link" download>Download example CSV ↗</a></div>
+          <label id="records-label">Listing records<textarea id="records" class="code" rows="10" required spellcheck="false" aria-label="Listing records"></textarea></label>
+          <details class="format-help"><summary>Which fields do I need?</summary><p>Required: <code>title, price, url</code>. Recommended: <code>product</code>. Optional: <code>id, marketplace, description, condition, shipping_cost_myr, seller_rating</code>.</p><p>Use RM amounts without currency symbols. Missing IDs are assigned by row; marketplace is inferred from a supported product URL.</p></details>
+          <div class="input-divider"></div>
+          <label><span class="field-title">Product query <small>optional</small></span><input id="query" placeholder="All imported products" maxlength="120"></label>
+          <label><span class="field-title">Maximum asking price RM <small>optional</small></span><input id="budget" type="number" min="0.01" step="0.01" placeholder="No ceiling"></label>
+          <label>Resale estimate<select id="valuation"><option value="median">Each product's asking-price median</option><option value="manual">One manual estimate for all rows</option></select></label>
+          <label id="manual-field" hidden>Manual resale estimate RM<input id="resale" type="number" min="0.01" max="1000000" step="0.01" value="450"></label>
+          <p class="estimate-hint" id="estimate-hint">A scenario based on the imported group's median. It is not a completed-sale valuation.</p>
+          <p class="estimate-hint" id="cost-assumptions">Cost assumptions load from the local configuration.</p>
+          <button type="submit" id="run" class="primary action blue">Build deal board <span aria-hidden="true">↗</span></button>
+          <button type="button" id="sample" class="secondary text-action">Load example listings</button>
+        </form>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </aside>
+      <section class="board" aria-labelledby="resultsTitle">
+        <div class="board-heading"><div><span class="eyebrow">02 / THE COMPARISON</span><h2 id="resultsTitle">Your deal board</h2></div><div class="board-header-actions"><span class="board-tag">Scenario estimates</span><button type="submit" form="compareForm" id="quick-run" class="action blue">Build board ↗</button></div></div>
+        <div class="desk-metrics"><div><span>IMPORTED</span><strong id="submitted">—</strong></div><div><span>RANKED</span><strong id="retained">—</strong></div><div><span>SET ASIDE</span><strong id="rejected">—</strong></div></div>
+        <div class="group-heading"><h3>Product groups</h3><button id="clear-group" class="quiet-button" hidden>Show all products</button></div>
+        <p class="band-note">Estimated fair-price bands use imported asking prices. Grouping is provisional; condition and completeness can differ.</p>
+        <div id="groups" class="group-grid"><div class="board-empty"><span aria-hidden="true">▤</span><h3>Start with a few listings.</h3><p>Paste your own records, or build the board with our fictional example.</p></div></div>
+        <div class="ranking-toolbar"><div><h3>Ranked opportunities</h3><span id="ranking-count">Build a board to compare the rows.</span></div><label>Order by<select id="sort"><option value="profit">Highest estimated profit</option><option value="price">Lowest asking price</option><option value="margin">Highest return on cost</option></select></label></div>
+        <div id="results"></div>
+        <section id="rejections-section" class="rejections" hidden><details><summary>Set-aside rows <span id="rejections-count"></span></summary><div id="rejections"></div></details></section>
+        <details class="raw-details"><summary>Inspect the API response</summary><pre id="raw">No comparison yet.</pre></details>
+        <p class="board-footnote">Profit uses the chosen resale estimate minus the asking price, shipping and resale fee. A high rank is not a buy signal. Imported links, seller claims and stock are unverified.</p>
+      </section>
+    </div>
+  </main>
+  <footer><span>Deal Desk · Local comparison workspace</span><span>No crawler. No provider requests. Your records stay in this local session.</span></footer>
+  <script src="/static/compare.js"></script>
+  <script src="/static/select-menu.js"></script>
+</body>
+</html>
+
