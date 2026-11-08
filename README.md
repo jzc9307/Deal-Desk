@@ -5,10 +5,6 @@ inspect estimated fair-price bands and rank estimated profit. The interface
 shares the Apple-inspired design foundation used by Shelf UI Lab: neutral
 surfaces, blue actions, rounded controls and short, purposeful transitions.
 
-This is a new standalone experiment. It reuses existing grouping, matching and
-cost helpers, with a new import adapter and comparison board. Attribution and
-AI assistance are documented in [NOTICE.md](NOTICE.md).
-
 ## Run
 
 Use Python 3.10 or newer:
@@ -155,15 +151,6 @@ python -B -m unittest test_server -v
 node --check static/compare.js
 ```
 
-Twelve tests cover CSV quoting/BOM/multiline cells, malformed input, duplicate
-records, product separation, group IDs, calculations, ranking, stable price bands
-and unverified provenance. Provider-client creation is blocked during these tests.
-
-The app has no accounts, durable storage or production authentication. CSV files
-are read in the browser, then submitted to this local server for comparison.
-This app does not intentionally persist them or send them to a provider. Keep it
-on localhost; public deployment would require additional access and request controls.
 
 No Apple assets, official components or copied Apple source are included.
-See [NOTICE.md](NOTICE.md) and `REUSE_MANIFEST.json` for the origin of reused code.
 
